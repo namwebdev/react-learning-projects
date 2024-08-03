@@ -1,0 +1,80 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "../ui/resizable";
+import { MessageContainer } from "./MessageContainer";
+import { User } from "@/db/dummy";
+import { cn } from "@/lib/utils";
+import { Sidebar } from "./Sidebar";
+import { useSelectedUser } from "@/store/useSelectedUser";
+const defaultLayout = [320, 480];
+const MAX_MOBILE_WIDTH = 768;
+
+export const ChatLayout = ({ users }: { users: User[] }) => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const { selectedUser } = useSelectedUser();
+
+  useEffect(() => {
+    const checkScreenWidth = () => {
+      setIsMobile(window.innerWidth <= MAX_MOBILE_WIDTH);
+    };
+
+    checkScreenWidth();
+    window.addEventListener("resize", checkScreenWidth);
+
+    return () => {
+      window.removeEventListener("resize", checkScreenWidth);
+    };
+  }, []);
+
+  return (
+    <ResizablePanelGroup
+      direction="horizontal"
+      className="h-full items-stretch bg-background rounded-lg"
+    >
+      <ResizablePanel
+        defaultSize={defaultLayout[0]}
+        collapsedSize={8}
+        collapsible={true}
+        minSize={isMobile ? 0 : 20}
+        maxSize={isMobile ? 8 : 30}
+        onCollapse={() => {
+          setIsCollapsed(true);
+          document.cookie = `react-resizable-panels:collapsed=true;`;
+        }}
+        onExpand={() => {
+          setIsCollapsed(false);
+          document.cookie = `react-resizable-panels:collapsed=false;`;
+        }}
+        className={cn(
+          isCollapsed && "min-w-[80px] transition-all duration-300 ease-in-out"
+        )}
+      >
+        <Sidebar isCollapsed={isCollapsed} users={users} />
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+        {!selectedUser && (
+          <div className="flex justify-center items-center h-full w-full px-10">
+            <div className="flex flex-col justify-center items-center gap-4">
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="w-full md:w-2/3 lg:w-1/2"
+              />
+              <p className="text-muted-foreground text-center">
+                Click on a chat to view the messages
+              </p>
+            </div>
+          </div>
+        )}
+        {selectedUser && <MessageContainer />}
+      </ResizablePanel>
+    </ResizablePanelGroup>
+  );
+};
