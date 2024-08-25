@@ -1,14 +1,7 @@
 import "./App.css";
-import Column from "./components/Column";
 
 function App() {
-  return (
-    <div className="main">
-      <Column state="PLANNED" />
-      <Column state="ONGOING" />
-      <Column state="DONE" />
-    </div>
-  );
+  return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
 }
 
 export default App;
