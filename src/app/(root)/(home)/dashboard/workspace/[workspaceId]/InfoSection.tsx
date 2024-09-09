@@ -12,12 +12,13 @@ import { Channel, User, Workspace } from "@/types";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants";
+import CreateChannelDialog from "./CreateChannelDialog";
 
 interface Props {
   userData: User;
   currentWorkspaceData: Workspace;
   userWorkspaceChannels: Channel[];
-  currentChannelId: string | undefined;
+  currentChannelId?: string;
 }
 
 export const InfoSection = ({
@@ -30,8 +31,13 @@ export const InfoSection = ({
   const router = useRouter();
 
   return (
-    <div className="fixed text-white bg-neutral-800 left-20 rounded-l-xl md:w-52 lg:w-[350px] h-[calc(100%-63px)] z-20 flex flex-col items-center">
-      <div className="w-full flex flex-col gap-2 p-3">
+    <>
+      <div className="w-full flex flex-col gap-2 p-4">
+        <Typography
+          variant="h4"
+          text={currentWorkspaceData.name}
+          className="font-bold"
+        />
         <Collapsible
           open={isChannelCollapsed}
           onOpenChange={() => setIsChannelCollapsed((prevState) => !prevState)}
@@ -60,13 +66,24 @@ export const InfoSection = ({
                     "px-2 py-1 rounded-sm cursor-pointer hover:bg-primary-dark",
                     activeChannel && "bg-primary-dark"
                   )}
-                  onClick={() => router.push(ROUTES.channel(channel.id))}
+                  onClick={() =>
+                    router.push(
+                      ROUTES.channel(currentWorkspaceData.id, channel.id)
+                    )
+                  }
                 />
               );
             })}
           </CollapsibleContent>
         </Collapsible>
       </div>
-    </div>
+
+      <CreateChannelDialog
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        workspaceId={currentWorkspaceData.id}
+        userId={currentWorkspaceData.super_admin}
+      />
+    </>
   );
 };

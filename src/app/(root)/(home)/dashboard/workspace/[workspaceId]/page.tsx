@@ -1,31 +1,9 @@
-import {
-  getCurrentWorkspaceData,
-  getUserWorkspaceData,
-} from "@/actions/workspace.action";
-import Sidebar from "@/components/Sidebar/Sidebar";
-import { ROUTES } from "@/constants";
-import { redirect } from "next/navigation";
-import { InfoSection } from "./InfoSection";
+import React from 'react'
 
-async function WorkspacePage({
-  params: { workspaceId },
-}: {
-  params: { workspaceId: string };
-}) {
-  const { data, error } = await getUserWorkspaceData(workspaceId);
-  if (error) return redirect(ROUTES.home);
-
-  const { data: currWorkspaceData, error: currWorkspaceErr } =
-    await getCurrentWorkspaceData(workspaceId);
-  if (currWorkspaceErr) return redirect(ROUTES.home);
-  console.log("WorkspacePage ", data, currWorkspaceData);
-
+function WorkspacePage() {
   return (
-    <div>
-      <Sidebar />
-      {/* <InfoSection /> */}
-    </div>
-  );
+    <div>WorkspacePage</div>
+  )
 }
 
-export default WorkspacePage;
+export default WorkspacePage

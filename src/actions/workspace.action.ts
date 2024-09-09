@@ -120,24 +120,22 @@ export const getCurrentWorkspaceData = async (workspaceId: string) => {
   data.members = memberDetails.filter((member) => member !== null);
   return { data };
 };
-
 interface WorkspaceData {
   userId: string;
   workspaceId: string;
 }
-const addWorkspaceToUser = async (
+export const addWorkspaceToUser = async (
   supabase: SupabaseClient,
   { userId, workspaceId }: WorkspaceData
 ) => {
   const { data, error } = await supabase.rpc("add_workspace_to_user", {
     user_id: userId,
-
     new_workspace: workspaceId,
   });
   return { data, error };
 };
 
-const addMemberToWorkspace = async (
+export const addMemberToWorkspace = async (
   supabase: SupabaseClient,
   { userId, workspaceId }: WorkspaceData
 ) => {

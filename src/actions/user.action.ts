@@ -1,10 +1,31 @@
 "use server";
 
+import { SupabaseClient } from "@supabase/supabase-js";
+import { NextApiRequest, NextApiResponse } from "next";
 import { supabaseServerClient } from "@/lib/supabase/supabase.server";
+import supabaseServerClientPages from "@/lib/supabase/supabaseServerPages";
+import { User } from "@/types";
 
-export const getUserData = async () => {
+export const getUserData = async (): Promise<User | null> => {
   const supabase = await supabaseServerClient();
+  const user = await getUseDataBySupabase(supabase);
 
+  return user;
+};
+
+export const getUserDataPages = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<User | null> => {
+  const supabase = supabaseServerClientPages(req, res);
+  const user = await getUseDataBySupabase(supabase);
+
+  return user;
+};
+
+const getUseDataBySupabase = async (
+  supabase: SupabaseClient
+): Promise<User | null> => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
