@@ -48,3 +48,38 @@ export const getMessages = async (): Promise<MessageWithSender[] | null> => {
 
   return data;
 };
+
+export const updateMessage = async (id: string, content: string) => {
+  const supabase = await supabaseServerClient();
+
+  const { data, error } = await supabase
+    .from("messages")
+    .update({
+      content,
+      is_edited: true,
+    })
+    .eq("id", id);
+  if (error) {
+    console.error("updateMessage error: ", error);
+    return null;
+  }
+
+  return data;
+};
+
+export const deleteMessage = async (id: string) => {
+  const supabase = await supabaseServerClient();
+
+  const { error } = await supabase
+    .from("messages")
+    .update({
+      is_deleted: true,
+    })
+    .eq("id", id);
+  if (error) {
+    console.error("deleteMessage error: ", error);
+    return false;
+  }
+
+  return true;
+};

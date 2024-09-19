@@ -1,6 +1,11 @@
 import Image from "next/image";
 import { useUser } from "@/lib/store/user";
-import { MessageWithSender } from "@/types";
+import { Message, MessageWithSender } from "@/types";
+import { useState } from "react";
+import { BiTrash } from "react-icons/bi";
+import { cn } from "@/lib/utils";
+import { deleteMessage } from "../_action";
+import { useMessages } from "@/lib/store/messages";
 
 export default function MessageItem({
   message,
@@ -8,14 +13,25 @@ export default function MessageItem({
   message: MessageWithSender;
 }) {
   const user = useUser((state) => state.user);
+  const { optimisticMessage } = useMessages();
+  const [isHovered, setIsHovered] = useState(false);
 
+  const onDeleteMessage = async () => {
+    await deleteMessage(message.id);
+    optimisticMessage({
+      ...message,
+      is_deleted: true,
+    });
+  };
   return (
     <div
-      className={`flex min-w-[712px] ${
+      className={`flex min-w-[712px] pr-4 pt-1 transition-colors duration-200 ${
         message.users.id === user?.id ? "justify-end" : "justify-start"
-      }`}
+      } ${!message.is_deleted ? "hover:bg-gray-100" : ""}`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex gap-2">
+      <div className="relative flex gap-2">
         <div>
           <Image
             src={message.users.avatar_url!}
@@ -26,19 +42,43 @@ export default function MessageItem({
           />
         </div>
         <div className="flex-1">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1 text-sm">
-              <h1 className="font-bold">{message.users.name}</h1>
-              <h1 className="text-sm text-gray-400">
-                {formatDate(message.created_at)}
-              </h1>
-              {message.is_edited && (
-                <h1 className="text-sm text-gray-400">edited</h1>
-              )}
-            </div>
-            {/* {message.users?.id === user?.id && <MessageMenu message={message} />} */}
-          </div>
-          <p className="text-gray-800 mt-1">{message.content}</p>
+          {message.is_deleted ? (
+            <p className="text-gray-400 text-sm">message is deleted</p>
+          ) : (
+            <>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1 text-sm">
+                  <h1 className="font-bold">{message.users.name}</h1>
+                  <h1 className="text-sm text-gray-400">
+                    {formatDate(message.created_at)}
+                  </h1>
+                </div>
+
+                <div
+                  className={cn(
+                    "absolute bottom-0 right-1 transition-all duration-200",
+                    isHovered && message.users?.id === user?.id
+                      ? "opacity-100"
+                      : "opacity-0"
+                  )}
+                >
+                  <span
+                    onClick={onDeleteMessage}
+                    className="cursor-pointer hover:text-red-400 transition-colors duration-200"
+                  >
+                    <BiTrash size={20} />
+                  </span>
+                </div>
+              </div>
+              <p className="text-gray-800 mt-1">
+                {message.content}
+
+                {message.is_edited && (
+                  <span className="text-sm text-gray-500">(edited)</span>
+                )}
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
