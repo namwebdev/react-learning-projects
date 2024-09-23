@@ -47,7 +47,6 @@ const ListMessage = () => {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "messages" },
         (payload) => {
-          console.log("🚀 ~ useEffect ~ payload:", payload);
           optimisticMessage(payload.new as Message);
         }
       )
@@ -122,7 +121,7 @@ const ListMessage = () => {
       // Scroll down a bit before fetching new messages
       const scrollAmount = 50; // Adjust this value as needed
       scrollRef.current.scrollTop += scrollAmount;
-      
+
       fetchMessages();
     }
   };

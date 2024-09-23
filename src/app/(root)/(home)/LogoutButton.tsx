@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants";
 import { supabaseBrowserClient } from "@/lib/supabase/supabase.client";
 import { useRouter } from "next/navigation";
@@ -12,5 +13,5 @@ export const LogoutButton = () => {
     router.push(ROUTES.auth);
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return <Button variant="outline" size="sm" onClick={handleLogout}>Logout</Button>;
 };
