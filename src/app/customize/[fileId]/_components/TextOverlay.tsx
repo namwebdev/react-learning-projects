@@ -8,39 +8,35 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TwitterPicker } from "react-color";
 
+export type OnUpdateTextOverlay = (
+  index: number,
+  text: string,
+  x: number,
+  y: number,
+  bgColor?: string
+) => void;
+
 export function TextOverlay({
-  index,
   onUpdate,
+  index,
 }: {
   index: number;
-  onUpdate: (
-    index: number,
-    text: string,
-    x: number,
-    y: number,
-    bgColor?: string
-  ) => void;
+  onUpdate: OnUpdateTextOverlay;
 }) {
   const [textOverlay, setTextOverlay] = useState("");
   const [textOverlayXPosition, setTextOverlayXPosition] = useState(0);
   const [textOverlayYPosition, setTextOverlayYPosition] = useState(0);
   const [applyTextBackground, setApplyTextBackground] = useState(false);
   const [textBgColor, setTextBgColor] = useState("#FFFFFF");
-
+  const bgColor = applyTextBackground
+  ? textBgColor.replace("#", "")
+  : undefined;
+  
   const xPositionDecimal = textOverlayXPosition / 100;
   const yPositionDecimal = textOverlayYPosition / 100;
-  const bgColor = applyTextBackground
-    ? textBgColor.replace("#", "")
-    : undefined;
 
   useEffect(() => {
-    onUpdate(
-      index,
-      textOverlay || " ",
-      xPositionDecimal,
-      yPositionDecimal,
-      bgColor
-    );
+    onUpdate(index, textOverlay || " ", xPositionDecimal, yPositionDecimal, bgColor);
   }, [
     index,
     textOverlay,
@@ -49,7 +45,6 @@ export function TextOverlay({
     bgColor,
     onUpdate,
   ]);
-
   return (
     <Card className="p-4 space-y-4">
       <div className="flex justify-between gap-8">
@@ -63,6 +58,7 @@ export function TextOverlay({
             value={textOverlay}
           />
         </div>
+
         <div className="flex items-center space-x-2 flex-col space-y-4">
           <div className="flex gap-4">
             <Checkbox
@@ -92,7 +88,8 @@ export function TextOverlay({
           {textBgColor}
         </div>
       </div>
-      <div>
+
+      <>
         <Label htmlFor={`text${index}XPosition`}>Text {index} X Position</Label>
         <Slider
           id={`text${index}XPosition`}
@@ -101,8 +98,9 @@ export function TextOverlay({
             setTextOverlayXPosition(v);
           }}
         />
-      </div>
-      <div>
+      </>
+
+      <>
         <Label htmlFor={`text${index}YPosition`}>Text {index} Y Position</Label>
         <Slider
           id={`text${index}YPosition`}
@@ -111,7 +109,7 @@ export function TextOverlay({
             setTextOverlayYPosition(v);
           }}
         />
-      </div>
+      </>
     </Card>
   );
 }

@@ -11,7 +11,9 @@ import {
 import { FileObject } from "imagekit/dist/libs/interfaces";
 import { IKImage } from "imagekitio-next";
 import { Download } from "lucide-react";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import { TextOverlay } from "./TextOverlay";
+import { debounce } from "lodash";
 
 interface Props {
   file: Pick<FileObject, "filePath" | "name" | "fileId">;
@@ -20,14 +22,15 @@ interface Props {
 }
 
 export const CustomizePanel = ({ file }: Props) => {
+  const [isUpdating, setIsUpdating] = useState(false);
   const [blur, setBlur] = useState(false);
   const [sharpen, setSharpen] = useState(false);
   const [grayscale, setGrayscale] = useState(false);
   const [numberOfOverlays, setNumberOfOverlays] = useState(1);
-  const [textTransformation, setTextTransformations] = useState<
+  const [textTransformations, setTextTransformations] = useState<
     Record<string, { raw: string }>
   >({});
-  const textTransformationsArray = Object.values(textTransformation);
+  const textTransformationsArray = Object.values(textTransformations);
 
   const onDownload = async () => {
     const image = document.querySelector("#meme img");
@@ -42,6 +45,23 @@ export const CustomizePanel = ({ file }: Props) => {
     a.download = file.name;
     a.click();
   };
+
+  const onTextOverlayUpdate = useCallback(
+    (index: number, text: string, x: number, y: number, bgColor?: string) => {
+      // setIsUpdating(true);
+      debounce(() => {
+        setTextTransformations((current) => ({
+          ...current,
+          [`text${index}`]: {
+            raw: `l-text,i-${text ?? " "},${
+              bgColor ? `bg-${bgColor},pa-10,` : ""
+            }fs-50,ly-bw_mul_${y.toFixed(2)},lx-bw_mul_${x.toFixed(2)},l-end`,
+          },
+        }));
+      }, 250)();
+    },
+    []
+  );
 
   return (
     <>
@@ -114,17 +134,45 @@ export const CustomizePanel = ({ file }: Props) => {
               </div>
             </div>
           </Card>
+
+          {new Array(numberOfOverlays).fill("").map((_, index) => (
+            <TextOverlay
+              key={index}
+              index={index + 1}
+              onUpdate={onTextOverlayUpdate}
+            />
+          ))}
+
+          <div className="gap-2 flex flex-row mt-2">
+            <Button
+              size="sm"
+              onClick={() => setNumberOfOverlays(numberOfOverlays + 1)}
+            >
+              Add another Text Overlay
+            </Button>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => {
+                setNumberOfOverlays(numberOfOverlays - 1);
+                setTextTransformations((current) => {
+                  const newCurr = { ...current };
+                  delete newCurr[`text${numberOfOverlays - 1}`];
+                  return newCurr;
+                });
+              }}
+            >
+              Remove last Text Overlay
+            </Button>
+          </div>
         </div>
 
-        {/* {new Array(numberOfOverlays).fill("").map((_, index) => (
-          <TextOverlay key={index} index={index + 1} onUpdate={onUpdate} />
-        ))} */}
-
-        <div className="flex flex-col gap-4">
+        <div className="relative flex flex-col gap-4">
           <div id="meme">
             <IKImage
               path={file.filePath}
               alt={file.name}
+                  // width="100%"
               transformation={
                 [
                   blur ? { raw: "bl-3" } : undefined,
@@ -133,8 +181,18 @@ export const CustomizePanel = ({ file }: Props) => {
                   ...textTransformationsArray,
                 ].filter(Boolean) as any
               }
+              // onLoad={() => {
+              //   setIsUpdating(false);
+              // }}
             />
           </div>
+          {isUpdating && (
+            <div className="absolute top-0 left-0 w-full flex items-center justify-center">
+              <div className="text-gray-00 bg-gray-100 px-4 py-2 text-2xl opacity-60 rounded-sm">
+                Updating...
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
