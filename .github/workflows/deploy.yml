@@ -1,0 +1,45 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [dating-app]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      # Step 1: Check out repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Step 2: Set up environment file
+      - name: Set up .env file
+        run: |
+          cat <<EOF > .env
+          NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
+          AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+          EOF
+        shell: bash
+
+      # Step 3: Use caching for Docker layers (if applicable)
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /home/ubuntu/.docker
+          key: ${{ runner.os }}-docker-cache
+          restore-keys: |
+            ${{ runner.os }}-docker-cache
+
+      # Step 4: Start the app using Docker Compose
+      - name: Start app
+        run: |
+          sudo -u ubuntu docker-compose up --build -d
+
+      # Step 5: Clean up environment file (optional, for security)
+      - name: Clean up .env file
+        run: |
+          shred -u .env
+        if: always() # Ensure this step runs even if previous steps fail
