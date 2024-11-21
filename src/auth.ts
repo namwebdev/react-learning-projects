@@ -5,7 +5,7 @@ import authConfig from "./auth.config";
 
 const prisma = new PrismaClient();
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers } = NextAuth({
   callbacks: {
     async jwt({ user, token }) {
       if (user) {
