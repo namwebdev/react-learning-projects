@@ -1,6 +1,7 @@
 "use client";
 
 import { logout } from "@/actions/auth.action";
+import { ROUTES } from "@/constants/routes";
 import {
   Avatar,
   Dropdown,
@@ -45,7 +46,7 @@ const UserMenu = ({ userInfo }: Props) => {
             Signed in as {userInfo?.name}
           </DropdownItem>
         </DropdownSection>
-        <DropdownItem as={Link} href="/members/edit">
+        <DropdownItem as={Link} href={ROUTES.memberEdit}>
           Edit profile
         </DropdownItem>
         <DropdownItem color="danger" onClick={async () => logout()}>

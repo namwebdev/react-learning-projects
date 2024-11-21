@@ -6,4 +6,5 @@ export const ROUTES = {
   verifyEmail: "/verify-email",
   member: "/members",
   memberDetail: (id: string) => `/members/${id}`,
+  memberEdit: "/members/edit",
 }

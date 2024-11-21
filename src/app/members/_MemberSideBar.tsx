@@ -12,11 +12,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-
-type Props = {
-  member: Member;
-  navLinks: { name: string; href: string }[];
-};
+import { Props } from "./_types";
 
 function MemberSideBar({ member, navLinks }: Props) {
   const pathname = usePathname();
