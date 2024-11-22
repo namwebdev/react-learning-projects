@@ -1,5 +1,5 @@
 # Stage 1: Base Image with pnpm
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install pnpm globally
 RUN npm install -g pnpm
