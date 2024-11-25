@@ -1,9 +1,13 @@
-import React from 'react'
-
-function MemberEditPage() {
+async function MemberEditPage() {
   return (
-    <div>MemberEditPage</div>
-  )
+    <div>test</div>
+    // <MemberContainer navLinks={navLinks} member={member}>
+    //   <CardInnerWrapper
+    //     header="Edit Profile"
+    //     body={<EditForm member={member} />}
+    //   />
+    // </MemberContainer>
+  );
 }
 
-export default MemberEditPage
+export default MemberEditPage;

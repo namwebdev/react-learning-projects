@@ -26,7 +26,10 @@ function LoginPage() {
     if (result.status === "success") {
       router.push(ROUTES.member);
       router.refresh();
+      return;
     }
+
+    console.error(result.error)
   };
   return (
     <Card className="w-3/5 mx-auto">

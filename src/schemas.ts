@@ -10,7 +10,7 @@ export const registerSchema = z.object({
 });
 export const profileSchema = z.object({
   gender: z.string().min(1),
-  description: z.string().min(1),
+  description: z.string().optional(),
   city: z.string().min(1),
   country: z.string().min(1),
   dateOfBirth: z
@@ -44,3 +44,11 @@ export const loginSchema = z.object({
   }),
 });
 export type LoginSchema = z.infer<typeof loginSchema>;
+
+export const messageSchema = z.object({
+  text: z.string().min(1, {
+      message: 'Content is reqired'
+  })
+})
+
+export type MessageSchema = z.infer<typeof messageSchema>

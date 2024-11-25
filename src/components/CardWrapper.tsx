@@ -7,6 +7,8 @@ import {
 } from "@nextui-org/react";
 import { ReactNode } from "react";
 import { IconType } from "react-icons/lib";
+import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
 type Props = {
   body?: ReactNode;
@@ -16,6 +18,7 @@ type Props = {
   action?: () => void;
   actionLabel?: string;
   footer?: ReactNode;
+  fullWidth?: boolean;
 };
 
 export default function CardWrapper({
@@ -26,10 +29,15 @@ export default function CardWrapper({
   subHeaderText,
   action,
   actionLabel,
+  fullWidth = false,
 }: Props) {
   return (
     <div className="flex items-center justify-center vertical-center">
-      <Card className="w-2/5 mx-auto p-5">
+      <Card
+        className={cn("w-2/5 mx-auto p-5", {
+          "w-full": fullWidth,
+        })}
+      >
         <CardHeader className="flex flex-col items-center justify-center">
           <div className="flex flex-col gap-2 items-center text-default">
             <div className="flex flex-row items-center gap-3">

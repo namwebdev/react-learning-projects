@@ -1,0 +1,1 @@
+UntrustedHost: Host must be trusted. URL was: http://13.228.73.151:3000/api/auth/session. Read more at https://errors.authjs.dev#untrustedhost

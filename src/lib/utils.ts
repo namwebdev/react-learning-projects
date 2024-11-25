@@ -9,3 +9,11 @@ export function calculateAge(dob: Date) {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export function formatShortDateTime(date: Date) {
+  return format(date, "dd MMM yy h:mm:a");
+}
+
+export function createChatId(a: string, b: string) {
+  return a > b ? `${b}-${a}` : `${a}-${b}`;
+}
