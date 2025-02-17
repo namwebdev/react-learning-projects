@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Session } from "./lib/auth/auth-types";
-import axios from "axios";
 
 async function getMiddlewareSession(req: NextRequest) {
     const response = await fetch(`${req.nextUrl.origin}/api/auth/get-session`, {
@@ -15,13 +14,6 @@ async function getMiddlewareSession(req: NextRequest) {
     }
 
     const session: Session = await response.json();
-    // const { data: session } = await axios.get<Session>("/api/auth/get-session", {
-    //     baseURL: req.nextUrl.origin,
-    //     headers: {
-    //         //get the cookie from the request
-    //         cookie: req.headers.get("cookie") || "",
-    //     },
-    // });
 
     return session;
 }

@@ -44,17 +44,9 @@ export const RenameFileForm = ({
         mutationFn: renameFile,
         onSuccess: (newData) => {
             queryClient.setQueryData(["files", file.category],
-
                 (oldData: { files: IFile[] }) => {
                     const oldFiles = oldData?.files || [];
                     const newFile = newData.file;
-
-                    if (oldFiles.length === 0) {
-                        return {
-                            files: [newFile]
-                        }
-                    }
-
 
                     const withNewFiles = oldFiles.map((oldFile) =>
                         oldFile._id === newFile?._id ? newFile : oldFile
@@ -63,10 +55,14 @@ export const RenameFileForm = ({
                         ...oldData,
                         files: withNewFiles,
                     };
-                    console.log(oldFiles, newFile, updatedData);
                     return updatedData;
                 }
             );
+
+            queryClient.invalidateQueries({
+                queryKey: ["files", file.category]
+            });
+
             toast("Success", {
                 description: file.name,
             });

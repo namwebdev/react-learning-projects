@@ -14,7 +14,8 @@ interface Props {
 }
 
 const page = async ({ params }: Props) => {
-  const page = (await params).page;
+  const _page = (await params).page;
+  const page = _page.endsWith("s") ? _page.slice(0, -1) : _page;
 
   return (
     <>

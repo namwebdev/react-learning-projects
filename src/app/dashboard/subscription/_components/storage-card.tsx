@@ -21,8 +21,6 @@ export const StorageCard = ({ isLoading, subs }: {
     const percentageUsedStorage =
         (subs?.usedStorage / subs?.selectedStorage) * 100;
 
-    console.log("subs: ", percentageUsedStorage);
-
     return (
         <>
             <Card className="bg-primary text-white border-none shadow-lg transition-all hover:shadow-xl rounded-lg">

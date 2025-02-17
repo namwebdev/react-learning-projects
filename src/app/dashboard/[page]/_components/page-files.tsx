@@ -22,9 +22,9 @@ const PageFiles = ({ page }: PageFilesProps) => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["files", page],
     queryFn: async () => await getFiles({ page, currentPage }),
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
+    // refetchOnMount: false,
+    // refetchOnReconnect: false,
+    // refetchOnWindowFocus: false,
   });
 
   useMutation({
@@ -33,7 +33,6 @@ const PageFiles = ({ page }: PageFilesProps) => {
       if (currentPage === newData.totalPages) {
         setIsPageFull(true);
       }
-
       queryClient.setQueryData(["files", page], (oldData: unknown) => {
         const oldFiles = (oldData as { files: IFile[] })?.files || [];
         const newFiles = newData.files as IFile[] || [];

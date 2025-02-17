@@ -14,6 +14,7 @@ import { P } from "@/components/custom/p";
 import { Button } from "@/components/ui/button";
 import { RiFileAddFill } from "@remixicon/react";
 import axios from "axios";
+
 type UploadResponse = {
     category: string;
     file: IFile;
@@ -30,19 +31,23 @@ export const UploadButton = () => {
         mutationFn: (file: File) => uploadFile(file, setFileProgress),
         onSuccess: (_newData) => {
             const newData = _newData as UploadResponse;
+            
+            // Cập nhật cache
             queryClient.setQueryData(
                 ["files", (newData).category],
                 (oldData: { files: IFile[] }) => {
                     const uploadedFile = newData.file;
                     const oldFile = oldData?.files || [];
-
                     const newMergeFiles = [uploadedFile, ...oldFile];
-
-                    const updatedData = { ...oldData, files: newMergeFiles };
-
-                    return updatedData;
+                    return { ...oldData, files: newMergeFiles };
                 }
-            )
+            );
+
+            // Thêm dòng này để invalidate query và trigger refetch
+            queryClient.invalidateQueries({
+                queryKey: ["files", newData.category]
+            });
+
             toast(newData?.message, {
                 description: newData?.description,
             });
@@ -183,6 +188,7 @@ async function uploadFile(file: File,
     const res = await axios.post("/api/v1/files/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
+            console.log(progressEvent);
             const total = progressEvent.total || 1;
             const loaded = progressEvent.loaded;
             const percent = Math.round((loaded / total) * 100);

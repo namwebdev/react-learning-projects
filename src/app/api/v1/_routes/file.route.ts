@@ -59,7 +59,7 @@ fileRoute.get("/", async (c) => {
       { status: 200 }
     );
   } catch (error) {
-    console.log("Error in searching file: ", error);
+    console.error("Error in searching file: ", error);
 
     const err = parseError(error);
 
@@ -71,7 +71,6 @@ fileRoute.get("/:page", async (c) => {
   try {
     await db();
     const category = normalizeCategory(c.req.param("page"));
-    console.log("category: ", category);
     const page = Number(c.req.query("page"));
     const session = await getServerSession();
     const FILE_SIZE = 9;
