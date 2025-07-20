@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: true  # Add this line
+    tty: true        # Add this line
+ports:
+  - "8000:8000"
+volumes:
+  - .:/usr/src/app
+  - /usr/src/app/node_modules
+environment:
+  - APP_PORT=$APP_PORT
+  - TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
+  - CLIENT_DOMAIN=$CLIENT_DOMAIN
+  - MONGODB_URI=$MONGODB_URI
+  - GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID
+  - GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+  - PADDLE_API_KEY=$PADDLE_API_KEY
+  - PADDLE_PRODUCT_ID=$PADDLE_PRODUCT_ID
+env_file:
+  - .env
+networks:
+  - mongo-default
+
+networks:
+  mongo-default:
+    external: true
